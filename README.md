@@ -18,7 +18,7 @@
 
 ## Presentation
 
-Codestral Agent est un projet d'assistant de code base sur Mistral/Codestral. Il contient un client Python, une interface web de demonstration et surtout une extension VSCodium/VS Code avec chat, historique, selection de modeles, compteur de tokens et mode agent multi-fichiers.
+Codestral Agent est un projet d'assistant de code base sur Mistral/Codestral. Il contient une interface web de demonstration et surtout une extension VSCodium/VS Code avec chat, historique, selection de modeles, compteur de tokens et mode agent multi-fichiers.
 
 Le but est de proposer une alternative ouverte a un agent de code moderne: lire un projet, comprendre une demande, creer ou modifier des fichiers, afficher les diffs, appliquer les changements, lancer les validations et corriger apres erreur.
 
@@ -26,8 +26,6 @@ Le but est de proposer une alternative ouverte a un agent de code moderne: lire 
 
 | Chemin | Role |
 |--------|------|
-| `codestral_client.py` | Client Python simple pour tester Codestral depuis le terminal |
-| `requirements.txt` | Dependances Python |
 | `web/` | Petite interface HTML/CSS de demonstration |
 | `codestral-vscode-extension/` | Extension VSCodium/VS Code principale |
 | `codestral-vscode-extension/README.md` | Fiche Marketplace de l'extension |
@@ -88,21 +86,6 @@ Console Mistral :
 https://console.mistral.ai/codestral
 ```
 
-## Client Python
-
-Installation :
-
-```bash
-pip install -r requirements.txt
-```
-
-Utilisation :
-
-```bash
-export CODESTRAL_API_KEY="votre_cle_ici"
-python codestral_client.py
-```
-
 ## Publication Marketplace
 
 La fiche Marketplace est dans :
@@ -123,6 +106,6 @@ Il faut un compte publisher Visual Studio Marketplace et un token Azure DevOps a
 
 ## Securite
 
-Ne mettez jamais une vraie cle API dans Git. Utilisez les variables d'environnement pour le client Python et le stockage securise de l'extension pour VSCodium/VS Code.
+Ne mettez jamais une vraie cle API dans Git. Utilisez le stockage securise de l'extension pour VSCodium/VS Code.
 
 La cle API est utilisee uniquement pour appeler l'API Mistral/Codestral.
