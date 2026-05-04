@@ -8,6 +8,20 @@ Cette page sert de fiche Marketplace et de page "A propos" de l'extension.
 
 Codestral Agent ajoute un assistant de code dans la barre laterale. Il peut discuter avec le projet, lire le workspace, proposer des patchs multi-fichiers, lancer les tests, corriger apres erreur, garder l'historique des conversations et afficher l'utilisation des tokens.
 
+### Source
+
+Code source GitHub :
+
+```text
+https://github.com/AnARCHIS12/Codestral-Agent
+```
+
+Issues et demandes :
+
+```text
+https://github.com/AnARCHIS12/Codestral-Agent/issues
+```
+
 ### Version actuelle 0.1.5
 
 - Correction de la validation agent pour les projets HTML/CSS/JS statiques.

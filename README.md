@@ -10,6 +10,7 @@
 
 <p align="center">
   <a href="https://marketplace.visualstudio.com/items?itemName=anar.codestral-ai"><img src="https://img.shields.io/badge/Marketplace-Codestral%20Agent-007ACC?logo=visualstudiocode&logoColor=white" alt="Marketplace"></a>
+  <a href="https://github.com/AnARCHIS12/Codestral-Agent"><img src="https://img.shields.io/badge/GitHub-Source-181717?logo=github&logoColor=white" alt="GitHub source"></a>
   <img src="https://img.shields.io/badge/version-0.1.5-0f172a" alt="Version 0.1.5">
   <img src="https://img.shields.io/badge/license-MIT-16a34a" alt="MIT license">
   <img src="https://img.shields.io/badge/VSCodium%20%2F%20VS%20Code-1.75%2B-2563eb" alt="VSCodium and VS Code 1.75+">
@@ -21,6 +22,12 @@
 Codestral Agent est un projet d'assistant de code base sur Mistral/Codestral. Il contient une interface web de demonstration et surtout une extension VSCodium/VS Code avec chat, historique, selection de modeles, compteur de tokens et mode agent multi-fichiers.
 
 Le but est de proposer une alternative ouverte a un agent de code moderne: lire un projet, comprendre une demande, creer ou modifier des fichiers, afficher les diffs, appliquer les changements, lancer les validations et corriger apres erreur.
+
+Source GitHub :
+
+```text
+https://github.com/AnARCHIS12/Codestral-Agent
+```
 
 ## Contenu Du Projet
 

@@ -5,6 +5,14 @@
   "version": "0.1.5",
   "publisher": "anar",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/AnARCHIS12/Codestral-Agent.git"
+  },
+  "bugs": {
+    "url": "https://github.com/AnARCHIS12/Codestral-Agent/issues"
+  },
+  "homepage": "https://github.com/AnARCHIS12/Codestral-Agent#readme",
   "icon": "icons/codestral-icon.png",
   "engines": {
     "vscode": "^1.75.0"
