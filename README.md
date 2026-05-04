@@ -57,6 +57,48 @@ Main features:
 
 ## Quick Extension Installation
 
+### Microsoft Marketplace
+
+For official Visual Studio Code, install from the Microsoft Marketplace:
+
+```bash
+code --install-extension CodestralAgent.codestral-ai
+```
+
+Marketplace page:
+
+```text
+https://marketplace.visualstudio.com/items?itemName=CodestralAgent.codestral-ai
+```
+
+### Open VSX / VSCodium
+
+For VSCodium and editors using Open VSX:
+
+```bash
+codium --install-extension CodestralAgent.codestral-ai
+```
+
+If you use the Flatpak version of VSCodium:
+
+```bash
+flatpak run com.vscodium.codium --install-extension CodestralAgent.codestral-ai
+```
+
+If you run this from inside the VSCodium Flatpak terminal:
+
+```bash
+flatpak-spawn --host flatpak run com.vscodium.codium --install-extension CodestralAgent.codestral-ai
+```
+
+Open VSX page:
+
+```text
+https://open-vsx.org/extension/CodestralAgent/codestral-ai
+```
+
+### Local VSIX
+
 From this folder:
 
 ```bash
@@ -67,8 +109,14 @@ npm run package:vsix
 
 Then install the `.vsix` file in VSCodium/VS Code:
 
-```text
-codestral-vscode-extension/codestral-ai-0.1.5.vsix
+```bash
+code --install-extension /home/anar/Libre_Ai_agents/codestral-vscode-extension/codestral-ai-0.1.5.vsix
+```
+
+For VSCodium Flatpak:
+
+```bash
+flatpak run com.vscodium.codium --install-extension /home/anar/Libre_Ai_agents/codestral-vscode-extension/codestral-ai-0.1.5.vsix
 ```
 
 In VSCodium:
