@@ -125,6 +125,12 @@ h1 {
 }
 .button:hover { transform: translateY(-2px); }
 .button.primary { color: #111827; background: var(--brand); }
+.button.marketplace {
+  width: fit-content;
+  margin: 4px 0 14px;
+  color: #ffffff;
+  background: #007acc;
+}
 .button.secondary {
   color: var(--text);
   border: 1px solid rgba(255, 255, 255, 0.15);
