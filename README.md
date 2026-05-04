@@ -5,11 +5,11 @@
 </p>
 
 <p align="center">
-  <strong>Assistant et agent de code pour VSCodium/VS Code, alimente par Mistral Codestral.</strong>
+  <strong>Coding assistant and agent for VSCodium/VS Code, powered by Mistral Codestral.</strong>
 </p>
 
 <p align="center">
-  <a href="https://marketplace.visualstudio.com/items?itemName=anar.codestral-ai"><img src="https://img.shields.io/badge/Marketplace-Codestral%20Agent-007ACC?logo=visualstudiocode&logoColor=white" alt="Marketplace"></a>
+  <a href="https://marketplace.visualstudio.com/items?itemName=CodestralAgent.codestral-ai"><img src="https://img.shields.io/badge/Marketplace-Codestral%20Agent-007ACC?logo=visualstudiocode&logoColor=white" alt="Marketplace"></a>
   <a href="https://github.com/AnARCHIS12/Codestral-Agent"><img src="https://img.shields.io/badge/GitHub-Source-181717?logo=github&logoColor=white" alt="GitHub source"></a>
   <img src="https://img.shields.io/badge/version-0.1.5-0f172a" alt="Version 0.1.5">
   <img src="https://img.shields.io/badge/license-MIT-16a34a" alt="MIT license">
@@ -17,46 +17,47 @@
   <img src="https://img.shields.io/badge/models-Mistral%20%2F%20Codestral-f97316" alt="Mistral and Codestral">
 </p>
 
-## Presentation
+## Overview
 
-Codestral Agent est un projet d'assistant de code base sur Mistral/Codestral. Il contient une interface web de demonstration et surtout une extension VSCodium/VS Code avec chat, historique, selection de modeles, compteur de tokens et mode agent multi-fichiers.
+Codestral Agent is a coding assistant project powered by Mistral/Codestral. It includes a static demo website and, most importantly, a VSCodium/VS Code extension with chat, conversation history, model selection, token usage, and a multi-file agent mode.
 
-Le but est de proposer une alternative ouverte a un agent de code moderne: lire un projet, comprendre une demande, creer ou modifier des fichiers, afficher les diffs, appliquer les changements, lancer les validations et corriger apres erreur.
+The goal is to provide an open alternative to a modern coding agent: read a project, understand a task, create or edit files, show diffs, apply changes, run validations, and fix errors after a failed run.
 
-Source GitHub :
+GitHub source:
 
 ```text
 https://github.com/AnARCHIS12/Codestral-Agent
 ```
 
-## Contenu Du Projet
+## Project Contents
 
-| Chemin | Role |
-|--------|------|
-| `web/` | Petite interface HTML/CSS de demonstration |
-| `codestral-vscode-extension/` | Extension VSCodium/VS Code principale |
-| `codestral-vscode-extension/README.md` | Fiche Marketplace de l'extension |
-| `codestral-vscode-extension/codestral-ai-0.1.5.vsix` | Package installable localement |
+| Path | Purpose |
+|------|---------|
+| `web/` | Static HTML/CSS demo website |
+| `docs/` | GitHub Pages version of the website |
+| `codestral-vscode-extension/` | Main VSCodium/VS Code extension |
+| `codestral-vscode-extension/README.md` | Marketplace listing page for the extension |
+| `codestral-vscode-extension/codestral-ai-0.1.5.vsix` | Locally installable extension package |
 
-## Extension Codestral Agent
+## Codestral Agent Extension
 
-Fonctions principales :
+Main features:
 
-- Panneau Codestral dans la barre d'activite.
-- Chat local avec historique des conversations.
-- Mode agent capable de creer, modifier et supprimer plusieurs fichiers.
-- Plan visible, diffs, application controlee et revert.
-- Tests, diagnostic et correction en boucle.
-- Detection du fichier actif et lecture du workspace.
-- Index local et memoire projet dans `.codestral/`.
-- Selecteur de modeles Mistral/Codestral.
-- Compteur de tokens.
-- Parametres de langue pour l'interface et les reponses.
-- Demande d'elevation ponctuelle via terminal en cas d'erreur de permissions.
+- Codestral panel in the activity bar.
+- Local chat with conversation history.
+- Agent mode that can create, edit, and delete multiple files.
+- Visible plan, diffs, controlled apply flow, and revert.
+- Tests, diagnostics, and correction loop.
+- Active file detection and workspace reading.
+- Local project index and memory in `.codestral/`.
+- Mistral/Codestral model selector.
+- Token usage counter.
+- Interface and response language settings.
+- One-time privilege elevation request through the terminal when a command fails because of permissions.
 
-## Installation Rapide De L'Extension
+## Quick Extension Installation
 
-Depuis ce dossier :
+From this folder:
 
 ```bash
 cd /home/anar/Libre_Ai_agents/codestral-vscode-extension
@@ -64,62 +65,62 @@ npm install
 npm run package:vsix
 ```
 
-Puis installez le fichier `.vsix` dans VSCodium/VS Code :
+Then install the `.vsix` file in VSCodium/VS Code:
 
 ```text
 codestral-vscode-extension/codestral-ai-0.1.5.vsix
 ```
 
-Dans VSCodium :
+In VSCodium:
 
-1. Ouvrez la vue Extensions.
-2. Cliquez sur le menu `...`.
-3. Choisissez `Install from VSIX...`.
-4. Selectionnez `codestral-ai-0.1.5.vsix`.
-5. Rechargez la fenetre avec `Developer: Reload Window`.
+1. Open the Extensions view.
+2. Click the `...` menu.
+3. Choose `Install from VSIX...`.
+4. Select `codestral-ai-0.1.5.vsix`.
+5. Reload the window with `Developer: Reload Window`.
 
-## Configuration API
+## API Configuration
 
-Dans l'extension :
+Inside the extension:
 
-1. Ouvrez l'icone Codestral dans la barre de gauche.
-2. Cliquez sur `API`.
-3. Choisissez `Ouvrir la console Mistral` ou `Entrer la cle API`.
-4. Cliquez sur `Mod` pour selectionner un modele disponible.
+1. Open the Codestral icon in the left activity bar.
+2. Click `API`.
+3. Choose `Open Mistral Console` or `Enter API Key`.
+4. Click `Mod` to select an available model.
 
-Console Mistral :
+Mistral Console:
 
 ```text
 https://console.mistral.ai/codestral
 ```
 
-## Publication Marketplace
+## Marketplace Publishing
 
-La fiche Marketplace est dans :
+The Marketplace listing page is located at:
 
 ```text
 codestral-vscode-extension/README.md
 ```
 
-Pour publier :
+To publish:
 
 ```bash
 cd /home/anar/Libre_Ai_agents/codestral-vscode-extension
-npx @vscode/vsce login anar
+npx @vscode/vsce login CodestralAgent
 npx @vscode/vsce publish
 ```
 
-Il faut un compte publisher Visual Studio Marketplace et un token Azure DevOps avec le droit `Marketplace: Manage`.
+You need a Visual Studio Marketplace publisher account and an Azure DevOps token with the `Marketplace: Manage` permission.
 
 ## GitHub Pages
 
-Le site statique pret pour GitHub Pages est dans :
+The static site prepared for GitHub Pages is located in:
 
 ```text
 docs/
 ```
 
-Il contient :
+It contains:
 
 - `docs/index.html`
 - `docs/styles.css`
@@ -127,26 +128,26 @@ Il contient :
 - `docs/downloads/codestral-ai-0.1.5.vsix`
 - `docs/.nojekyll`
 
-Pour l'activer sur GitHub :
+To enable it on GitHub:
 
-1. Va sur `https://github.com/AnARCHIS12/Codestral-Agent`.
-2. Ouvre `Settings`.
-3. Va dans `Pages`.
-4. Dans `Build and deployment`, choisis `Deploy from a branch`.
-5. Selectionne la branche `main`.
-6. Selectionne le dossier `/docs`.
-7. Clique sur `Save`.
+1. Go to `https://github.com/AnARCHIS12/Codestral-Agent`.
+2. Open `Settings`.
+3. Open `Pages`.
+4. Under `Build and deployment`, choose `Deploy from a branch`.
+5. Select the `main` branch.
+6. Select the `/docs` folder.
+7. Click `Save`.
 
-L'URL publique devrait etre :
+The public URL should be:
 
 ```text
 https://anarchis12.github.io/Codestral-Agent/
 ```
 
-Apres un push, GitHub peut prendre quelques minutes avant d'afficher le site.
+After pushing changes, GitHub can take a few minutes before the site appears.
 
-## Securite
+## Security
 
-Ne mettez jamais une vraie cle API dans Git. Utilisez le stockage securise de l'extension pour VSCodium/VS Code.
+Never commit a real API key to Git. Use the extension secure storage in VSCodium/VS Code.
 
-La cle API est utilisee uniquement pour appeler l'API Mistral/Codestral.
+The API key is only used to call the Mistral/Codestral API.
