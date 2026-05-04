@@ -111,6 +111,40 @@ npx @vscode/vsce publish
 
 Il faut un compte publisher Visual Studio Marketplace et un token Azure DevOps avec le droit `Marketplace: Manage`.
 
+## GitHub Pages
+
+Le site statique pret pour GitHub Pages est dans :
+
+```text
+docs/
+```
+
+Il contient :
+
+- `docs/index.html`
+- `docs/styles.css`
+- `docs/assets/codestral-icon.png`
+- `docs/downloads/codestral-ai-0.1.5.vsix`
+- `docs/.nojekyll`
+
+Pour l'activer sur GitHub :
+
+1. Va sur `https://github.com/AnARCHIS12/Codestral-Agent`.
+2. Ouvre `Settings`.
+3. Va dans `Pages`.
+4. Dans `Build and deployment`, choisis `Deploy from a branch`.
+5. Selectionne la branche `main`.
+6. Selectionne le dossier `/docs`.
+7. Clique sur `Save`.
+
+L'URL publique devrait etre :
+
+```text
+https://anarchis12.github.io/Codestral-Agent/
+```
+
+Apres un push, GitHub peut prendre quelques minutes avant d'afficher le site.
+
 ## Securite
 
 Ne mettez jamais une vraie cle API dans Git. Utilisez le stockage securise de l'extension pour VSCodium/VS Code.
