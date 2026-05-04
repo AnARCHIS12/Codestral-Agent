@@ -131,6 +131,14 @@ h1 {
   color: #ffffff;
   background: #007acc;
 }
+.button.openvsx {
+  width: fit-content;
+  color: #ffffff;
+  background: #c160ef;
+}
+.install-steps .button.openvsx {
+  margin: 0 0 14px;
+}
 .button.secondary {
   color: var(--text);
   border: 1px solid rgba(255, 255, 255, 0.15);
