@@ -1,0 +1,286 @@
+{
+  "name": "codestral-ai",
+  "displayName": "Codestral Agent",
+  "description": "Agent de code pour VSCodium/VS Code avec chat, patchs multi-fichiers, tests, historique et modèles Mistral/Codestral.",
+  "version": "0.1.5",
+  "publisher": "anar",
+  "license": "MIT",
+  "icon": "icons/codestral-icon.png",
+  "engines": {
+    "vscode": "^1.75.0"
+  },
+  "categories": [
+    "Machine Learning",
+    "Programming Languages",
+    "Other"
+  ],
+  "keywords": [
+    "codestral",
+    "mistral",
+    "agent",
+    "ai",
+    "coding",
+    "chat",
+    "codex",
+    "vscodium"
+  ],
+  "galleryBanner": {
+    "color": "#0f172a",
+    "theme": "dark"
+  },
+  "qna": "marketplace",
+  "activationEvents": [
+    "onCommand:codestral-ai.completeCode",
+    "onCommand:codestral-ai.chat",
+    "onCommand:codestral-ai.setApiKey",
+    "onCommand:codestral-ai.selectModel",
+    "onCommand:codestral-ai.showAvailableModels",
+    "onCommand:codestral-ai.openSettingsMenu",
+    "onCommand:codestral-ai.explainSelection",
+    "onCommand:codestral-ai.fixSelection",
+    "onCommand:codestral-ai.generateTests",
+    "onCommand:codestral-ai.reviewFile",
+    "onCommand:codestral-ai.agentTask",
+    "onCommand:codestral-ai.revertLastAgentPatch",
+    "onCommand:codestral-ai.rebuildWorkspaceIndex",
+    "onCommand:codestral-ai.stopAgentCommand",
+    "onCommand:codestral-ai.rerunAgentCommand",
+    "onCommand:codestral-ai.startDevServer",
+    "onCommand:codestral-ai.stopDevServer",
+    "onCommand:codestral-ai.restartDevServer",
+    "onCommand:codestral-ai.planTask",
+    "onCommand:codestral-ai.reviewWorkspace",
+    "onCommand:codestral-ai.runTests",
+    "onView:codestral-ai.sidebar"
+  ],
+  "main": "./out/extension.js",
+  "contributes": {
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "codestral-ai",
+          "title": "Codestral",
+          "icon": "icons/codestral-activity.svg"
+        }
+      ]
+    },
+    "views": {
+      "codestral-ai": [
+        {
+          "id": "codestral-ai.sidebar",
+          "name": "Codestral",
+          "type": "webview"
+        }
+      ]
+    },
+    "commands": [
+      {
+        "command": "codestral-ai.completeCode",
+        "title": "Codestral: Complete Code"
+      },
+      {
+        "command": "codestral-ai.chat",
+        "title": "Codestral: Chat"
+      },
+      {
+        "command": "codestral-ai.setApiKey",
+        "title": "Codestral: Set API Key"
+      },
+      {
+        "command": "codestral-ai.selectModel",
+        "title": "Codestral: Select Model"
+      },
+      {
+        "command": "codestral-ai.showAvailableModels",
+        "title": "Codestral: Show Available Models"
+      },
+      {
+        "command": "codestral-ai.openSettingsMenu",
+        "title": "Codestral: Settings"
+      },
+      {
+        "command": "codestral-ai.explainSelection",
+        "title": "Codestral: Explain Selection"
+      },
+      {
+        "command": "codestral-ai.fixSelection",
+        "title": "Codestral: Fix Selection"
+      },
+      {
+        "command": "codestral-ai.generateTests",
+        "title": "Codestral: Generate Tests"
+      },
+      {
+        "command": "codestral-ai.reviewFile",
+        "title": "Codestral: Review File"
+      },
+      {
+        "command": "codestral-ai.agentTask",
+        "title": "Codestral: Agent Task"
+      },
+      {
+        "command": "codestral-ai.revertLastAgentPatch",
+        "title": "Codestral: Revert Last Agent Patch"
+      },
+      {
+        "command": "codestral-ai.rebuildWorkspaceIndex",
+        "title": "Codestral: Rebuild Workspace Index"
+      },
+      {
+        "command": "codestral-ai.stopAgentCommand",
+        "title": "Codestral: Stop Agent Command"
+      },
+      {
+        "command": "codestral-ai.rerunAgentCommand",
+        "title": "Codestral: Rerun Agent Command"
+      },
+      {
+        "command": "codestral-ai.startDevServer",
+        "title": "Codestral: Start Dev Server"
+      },
+      {
+        "command": "codestral-ai.stopDevServer",
+        "title": "Codestral: Stop Dev Server"
+      },
+      {
+        "command": "codestral-ai.restartDevServer",
+        "title": "Codestral: Restart Dev Server"
+      },
+      {
+        "command": "codestral-ai.planTask",
+        "title": "Codestral: Plan Task"
+      },
+      {
+        "command": "codestral-ai.reviewWorkspace",
+        "title": "Codestral: Review Workspace"
+      },
+      {
+        "command": "codestral-ai.runTests",
+        "title": "Codestral: Run Tests and Diagnose"
+      }
+    ],
+    "configuration": {
+      "title": "Codestral AI",
+      "properties": {
+        "codestral-ai.apiKey": {
+          "type": "string",
+          "default": "",
+          "description": "Ancien stockage de clé API. Utilisez Codestral: Set API Key, qui sauvegarde maintenant la clé dans SecretStorage."
+        },
+        "codestral-ai.model": {
+          "type": "string",
+          "default": "codestral-latest",
+          "description": "Modèle Mistral/Codestral utilisé pour le chat, l'agent et la complétion"
+        },
+        "codestral-ai.responseLanguage": {
+          "type": "string",
+          "default": "français",
+          "description": "Langue utilisée par Codestral pour répondre dans le chat et les commandes agent"
+        },
+        "codestral-ai.interfaceLanguage": {
+          "type": "string",
+          "default": "français",
+          "enum": [
+            "français",
+            "anglais",
+            "arabe",
+            "espagnol",
+            "allemand",
+            "italien",
+            "portugais"
+          ],
+          "description": "Langue utilisée par l’interface du panneau Codestral"
+        },
+        "codestral-ai.experimentalModels": {
+          "type": "array",
+          "default": [
+            "codestral-latest",
+            "codestral-2508",
+            "mistral-large-latest"
+          ],
+          "items": {
+            "type": "string"
+          },
+          "description": "Liste de modèles proposés par Codestral: Select Model"
+        },
+        "codestral-ai.maxTokens": {
+          "type": "number",
+          "default": 200,
+          "description": "Nombre maximum de tokens à générer"
+        },
+        "codestral-ai.agentMaxTokens": {
+          "type": "number",
+          "default": 4000,
+          "description": "Nombre maximum de tokens pour le mode Agent multi-fichiers"
+        },
+        "codestral-ai.temperature": {
+          "type": "number",
+          "default": 0.7,
+          "minimum": 0.0,
+          "maximum": 1.0,
+          "description": "Contrôle la créativité de la génération"
+        },
+        "codestral-ai.testCommand": {
+          "type": "string",
+          "default": "npm test",
+          "description": "Commande de test lancée par Codestral: Run Tests and Diagnose"
+        },
+        "codestral-ai.devServerCommand": {
+          "type": "string",
+          "default": "",
+          "description": "Commande serveur dev utilisée par Codestral: Start Dev Server. Vide = détection automatique."
+        },
+        "codestral-ai.agentMaxIterations": {
+          "type": "number",
+          "default": 4,
+          "minimum": 1,
+          "maximum": 8,
+          "description": "Nombre maximum de cycles appliquer/tester/corriger pour Codestral: Agent Task"
+        },
+        "codestral-ai.reviewPatchByFile": {
+          "type": "boolean",
+          "default": false,
+          "description": "Afficher une sélection fichier par fichier avant l’application du patch agent. Désactivé par défaut pour un mode plus autonome."
+        },
+        "codestral-ai.autoApplySafePatches": {
+          "type": "boolean",
+          "default": true,
+          "description": "Appliquer automatiquement les patchs jugés sûrs: pas de suppression, peu de fichiers et taille raisonnable."
+        },
+        "codestral-ai.askForPrivilegeElevation": {
+          "type": "boolean",
+          "default": true,
+          "description": "Demander une confirmation pour relancer dans un terminal avec sudo lorsqu’une commande échoue à cause des permissions."
+        },
+        "codestral-ai.allowRiskyShellCommands": {
+          "type": "boolean",
+          "default": false,
+          "description": "Autoriser les commandes shell potentiellement destructives. Désactivé par défaut pour le mode sandbox agent."
+        },
+        "codestral-ai.inheritSensitiveEnv": {
+          "type": "boolean",
+          "default": false,
+          "description": "Transmettre les variables d’environnement sensibles aux commandes agent. Désactivé par défaut pour éviter de fuiter clés et tokens."
+        }
+      }
+    }
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run compile",
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./",
+    "package:vsix": "vsce package --allow-missing-repository",
+    "pretest": "npm run compile && npm run lint",
+    "lint": "eslint src --ext ts"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "@types/node": "^18.16.0",
+    "@types/vscode": "^1.75.0",
+    "@typescript-eslint/eslint-plugin": "^6.0.0",
+    "@typescript-eslint/parser": "^6.0.0",
+    "eslint": "^8.0.0",
+    "@vscode/vsce": "^3.2.2",
+    "typescript": "^5.0.0"
+  }
+}

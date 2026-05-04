@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Codestral AI - Alternative Open Source à GitHub Codex</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <header class="header">
+        <div class="container">
+            <div class="logo-container">
+                <svg class="logo" viewBox="0 0 128 128" xmlns="http://www.w3.org/2000/svg">
+                    <defs>
+                        <linearGradient id="grad1" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" style="stop-color:#6366F1;stop-opacity:1" />
+                            <stop offset="100%" style="stop-color:#8B5CF6;stop-opacity:1" />
+                        </linearGradient>
+                    </defs>
+                    <circle cx="64" cy="64" r="60" fill="url(#grad1)" opacity="0.9"/>
+                    <path d="M45 35 Q35 35 35 45 Q35 80 45 85 Q55 90 60 88 Q75 90 80 80 Q85 70 80 60 Q85 50 80 40 Q75 30 60 32 Q55 30 45 35 Z"
+                          fill="none" stroke="white" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M64 50 L70 60 L64 70 L58 60 Z" fill="white"/>
+                </svg>
+                <div class="logo-text">
+                    <h1>Codestral AI</h1>
+                    <span class="tagline">Alternative Open Source à GitHub Codex</span>
+                </div>
+            </div>
+            <nav class="nav">
+                <a href="#features">Fonctionnalités</a>
+                <a href="#install">Installation</a>
+                <a href="#usage">Utilisation</a>
+                <a href="#comparison">Comparaison</a>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <!-- Hero Section -->
+        <section class="hero">
+            <div class="container">
+                <div class="hero-content">
+                    <h2>Complétion de code <span class="highlight">gratuite</span> et <span class="highlight">open source</span></h2>
+                    <p class="hero-subtitle">Utilisez la puissance de Codestral de Mistral AI comme alternative à GitHub Codex, sans frais.</p>
+                    <div class="hero-buttons">
+                        <a href="#install" class="btn btn-primary">Installer maintenant</a>
+                        <a href="https://github.com" class="btn btn-secondary">Voir sur GitHub</a>
+                    </div>
+                </div>
+                <div class="hero-image">
+                    <div class="code-preview">
+                        <div class="code-window">
+                            <div class="code-header">
+                                <span class="dot red"></span>
+                                <span class="dot yellow"></span>
+                                <span class="dot green"></span>
+                                <span class="file-name">extension.ts</span>
+                            </div>
+                            <pre class="code-content"><code><span class="keyword">const</span> client = <span class="function">CodestralClient</span>();
+
+<span class="keyword">const</span> completion = <span class="keyword">await</span> client.<span class="method">completeCode</span>(
+  <span class="string">"def factorial(n):"</span>,
+  <span class="string">"python"</span>
+);
+
+<span class="comment">// Result: else: return n * factorial(n-1)</span></code></pre>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Features Section -->
+        <section id="features" class="features">
+            <div class="container">
+                <h2 class="section-title">✨ Fonctionnalités</h2>
+                <div class="features-grid">
+                    <div class="feature-card">
+                        <div class="feature-icon">💻</div>
+                        <h3>Complétion de code</h3>
+                        <p>Génération intelligente de code basée sur votre contexte, compatible avec tous les langages.</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">💬</div>
+                        <h3>Chat intégré</h3>
+                        <p>Posez des questions et obtenez des réponses détaillées pour résoudre vos problèmes de développement.</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">🌍</div>
+                        <h3>Multi-langages</h3>
+                        <p>Supporte Python, JavaScript, TypeScript, Java, C++, Go, Rust, PHP, et bien d'autres.</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">🔧</div>
+                        <h3>Extension VS Code</h3>
+                        <p>Intégration native dans votre éditeur préféré avec commands et autocomplétion.</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">🆓</div>
+                        <h3>100% Gratuit</h3>
+                        <p>Utilisez Codestral gratuitement, sans abonnement, sans limites (selon Mistral AI).</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">🔓</div>
+                        <h3>Open Source</h3>
+                        <p>Code transparent, modifiable et redistribuable sous licence MIT.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Installation Section -->
+        <section id="install" class="install">
+            <div class="container">
+                <h2 class="section-title">📥 Installation</h2>
+                <div class="install-methods">
+                    <div class="install-card">
+                        <h3>📦 Méthode 1 : Extension VS Code</h3>
+                        <ol>
+                            <li>Ouvrez VS Code</li>
+                            <li>Allez dans Extensions (Ctrl+Shift+X)</li>
+                            <li>Recherchez "Codestral AI"</li>
+                            <li>Cliquez sur Installer</li>
+                        </ol>
+                        <p class="note">Bientôt disponible sur le Marketplace</p>
+                    </div>
+                    <div class="install-card">
+                        <h3>💻 Méthode 2 : Installation manuelle</h3>
+                        <div class="code-block">
+<pre><code># Cloner le dépôt
+cd Libre_Ai_agents/codestral-vscode-extension
+
+# Installer les dépendances
+npm install
+
+# Compiler
+npm run compile
+
+# Lancer en mode debug (F5)
+code .</code></pre>
+                        </div>
+                    </div>
+                    <div class="install-card">
+                        <h3>📁 Méthode 3 : Depuis un fichier .vsix</h3>
+                        <div class="code-block">
+<pre><code># Installer vsce
+npm install -g @vscode/vsce
+
+# Packager l'extension
+vsce package
+
+# Dans VS Code :
+# Extensions → ... → Install from VSIX...</code></pre>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Comparison Section -->
+        <section id="comparison" class="comparison">
+            <div class="container">
+                <h2 class="section-title">🔍 Comparaison avec GitHub Codex</h2>
+                <div class="comparison-table">
+                    <div class="comparison-header">
+                        <div class="comparison-cell">Fonctionnalité</div>
+                        <div class="comparison-cell">GitHub Codex</div>
+                        <div class="comparison-cell">Codestral AI</div>
+                    </div>
+                    <div class="comparison-row">
+                        <div class="comparison-cell">Complétion de code</div>
+                        <div class="comparison-cell check">✅</div>
+                        <div class="comparison-cell check">✅</div>
+                    </div>
+                    <div class="comparison-row">
+                        <div class="comparison-cell">Fill-in-the-middle (FIM)</div>
+                        <div class="comparison-cell check">✅</div>
+                        <div class="comparison-cell check">✅</div>
+                    </div>
+                    <div class="comparison-row">
+                        <div class="comparison-cell">Chat / Questions</div>
+                        <div class="comparison-cell check">✅ (Copilot Chat)</div>
+                        <div class="comparison-cell check">✅</div>
+                    </div>
+                    <div class="comparison-row">
+                        <div class="comparison-cell">Multi-langages</div>
+                        <div class="comparison-cell check">✅</div>
+                        <div class="comparison-cell check">✅</div>
+                    </div>
+                    <div class="comparison-row">
+                        <div class="comparison-cell">Intégration VS Code</div>
+                        <div class="comparison-cell check">✅</div>
+                        <div class="comparison-cell check">✅</div>
+                    </div>
+                    <div class="comparison-row">
+                        <div class="comparison-cell">Prix</div>
+                        <div class="comparison-cell price">💰 Payant</div>
+                        <div class="comparison-cell price free">🆓 Gratuit</div>
+                    </div>
+                    <div class="comparison-row">
+                        <div class="comparison-cell">Open Source</div>
+                        <div class="comparison-cell">❌</div>
+                        <div class="comparison-cell check">✅</div>
+                    </div>
+                    <div class="comparison-row">
+                        <div class="comparison-cell">Contrôle des données</div>
+                        <div class="comparison-cell">❌ (GitHub/Microsoft)</div>
+                        <div class="comparison-cell check">✅ (Vous)</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Usage Section -->
+        <section id="usage" class="usage">
+            <div class="container">
+                <h2 class="section-title">💡 Utilisation</h2>
+                <div class="usage-grid">
+                    <div class="usage-card">
+                        <h3>🔑 Configurer la clé API</h3>
+                        <p>1. Ouvrez la palette de commandes (Ctrl+Shift+P)</p>
+                        <p>2. Tapez <code>Codestral: Set API Key</code></p>
+                        <p>3. Entrez votre clé (ex: <code>2CY5...</code>)</p>
+                        <div class="api-key-preview">
+                            <span class="api-key">2CY5****************************</span>
+                            <span class="copy-btn">Copier</span>
+                        </div>
+                    </div>
+                    <div class="usage-card">
+                        <h3>⌨️ Compléter du code</h3>
+                        <p>1. Placez votre curseur dans le code</p>
+                        <p>2. Appuyez sur <kbd>Ctrl+Alt+C</kbd> ou exécutez <code>Codestral: Complete Code</code></p>
+                        <p>3. Le code généré apparaît instantanément</p>
+                        <div class="code-preview small">
+                            <pre><code><span class="comment">// Avant</span>
+<span class="keyword">def</span> calculate_factorial(n):
+    <span class="keyword">if</span> n <= 1:
+        <span class="keyword">return</span> 1
+
+<span class="comment">// Après</span>
+<span class="keyword">def</span> calculate_factorial(n):
+    <span class="keyword">if</span> n <= 1:
+        <span class="keyword">return</span> 1
+    <span class="keyword">else</span>:
+        <span class="keyword">return</span> n * calculate_factorial(n-1)</code></pre>
+                        </div>
+                    </div>
+                    <div class="usage-card">
+                        <h3>💬 Utiliser le chat</h3>
+                        <p>1. Appuyez sur <kbd>Ctrl+Alt+Shift+C</kbd> ou exécutez <code>Codestral: Chat</code></p>
+                        <p>2. Posez votre question</p>
+                        <p>3. La réponse s'ouvre dans un nouvel onglet</p>
+                        <div class="chat-preview">
+                            <div class="chat-message user">
+                                <strong>Vous:</strong> Comment optimiser cette boucle ?
+                            </div>
+                            <div class="chat-message ai">
+                                <strong>Codestral:</strong> Utilisez une compréhension de liste...
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- API Section -->
+        <section class="api-section">
+            <div class="container">
+                <h2 class="section-title">🔌 API Endpoints</h2>
+                <div class="api-cards">
+                    <div class="api-card">
+                        <h3>POST /v1/fim/completions</h3>
+                        <p>Complétion de code (Fill-in-the-middle)</p>
+                        <div class="endpoint">https://codestral.mistral.ai/v1/fim/completions</div>
+                    </div>
+                    <div class="api-card">
+                        <h3>POST /v1/chat/completions</h3>
+                        <p>Chat et questions/réponses</p>
+                        <div class="endpoint">https://codestral.mistral.ai/v1/chat/completions</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-logo">
+                    <svg class="logo-small" viewBox="0 0 128 128" xmlns="http://www.w3.org/2000/svg">
+                        <defs>
+                            <linearGradient id="grad2" x1="0%" y1="0%" x2="100%" y2="100%">
+                                <stop offset="0%" style="stop-color:#6366F1;stop-opacity:1" />
+                                <stop offset="100%" style="stop-color:#8B5CF6;stop-opacity:1" />
+                            </linearGradient>
+                        </defs>
+                        <circle cx="64" cy="64" r="60" fill="url(#grad2)" opacity="0.9"/>
+                        <path d="M45 35 Q35 35 35 45 Q35 80 45 85 Q55 90 60 88 Q75 90 80 80 Q85 70 80 60 Q85 50 80 40 Q75 30 60 32 Q55 30 45 35 Z"
+                              fill="none" stroke="white" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                    <div>
+                        <h4>Codestral AI</h4>
+                        <p>Alternative open source à GitHub Codex</p>
+                    </div>
+                </div>
+                <div class="footer-links">
+                    <a href="#">Documentation</a>
+                    <a href="https://github.com">GitHub</a>
+                    <a href="#">Licence MIT</a>
+                    <a href="#">Contribuer</a>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>Alimenté par <a href="https://mistral.ai">Mistral AI - Codestral</a></p>
+                <p>© 2024 - Libre AI Agents</p>
+            </div>
+        </div>
+    </footer>
+</body>
+</html>
