@@ -1,5 +1,18 @@
 # Changelog
 
+## 0.1.7
+
+- Correction des validations agent: les commandes serveur long-running comme `python -m http.server`, `npm run dev`, `npm start`, `vite` ou `live-server` ne sont plus acceptées comme `testCommand` générée par le modèle.
+- Le prompt agent précise que `testCommand` doit rester une vraie commande de validation courte, pas un serveur de développement.
+
+## 0.1.6
+
+- Ajout d'une phase de planification interne avant la génération de patch agent.
+- Ajout d'une inspection ciblée avant patch: lecture fichier par fichier, recherches de symboles/termes et commandes de validation guidées.
+- Ajout d'un rapport visuel/statique pour les projets HTML/CSS/JS: références locales, viewport, title, contenu, CSS responsive/focus et scripts liés.
+- Le mode Agent utilise plus de contexte projet, plus de tokens par défaut et une température plus basse pour produire des patchs plus stables.
+- Mise à jour de la configuration TypeScript pour exposer explicitement les types Node/VSCodium au serveur TypeScript.
+
 ## 0.1.5
 
 - Correction de la validation agent pour les projets HTML/CSS/JS statiques.

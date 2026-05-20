@@ -139,6 +139,13 @@ interface AgentAutonomyState {
     lastTestExitCode?: number | null;
 }
 
+interface AgentResearchPlan {
+    files?: string[];
+    searches?: string[];
+    commands?: string[];
+    visualChecks?: string[];
+}
+
 interface ProjectMemory {
     version: number;
     updatedAt: number;
@@ -2070,7 +2077,8 @@ export async function activate(context: vscode.ExtensionContext) {
     const runAgentPrompt = async (
         title: string,
         prompt: string,
-        maxTokensOverride?: number
+        maxTokensOverride?: number,
+        temperatureOverride?: number
     ): Promise<string | undefined> => {
         const currentApiKey = await ensureApiKey();
         if (!currentApiKey) {
@@ -2084,7 +2092,8 @@ export async function activate(context: vscode.ExtensionContext) {
         }, async () => {
             const currentConfig = vscode.workspace.getConfiguration('codestral-ai');
             const maxTokens = maxTokensOverride ?? currentConfig.get<number>('maxTokens', 1000);
-            const temperature = currentConfig.get<number>('temperature', 0.3);
+            const configuredTemperature = currentConfig.get<number>('temperature', 0.3);
+            const temperature = temperatureOverride ?? Math.min(configuredTemperature, 0.25);
             const model = currentConfig.get<string>('model', 'codestral-latest');
             const response = await callCodestralChat(
                 currentApiKey,
@@ -2351,6 +2360,8 @@ export async function activate(context: vscode.ExtensionContext) {
         ]);
         sidebarProvider.postAgentPlan('Codestral Agent', [
             { label: 'Lire le workspace', status: '○' },
+            { label: 'Planifier la solution', status: '○' },
+            { label: 'Inspecter fichiers/recherches', status: '○' },
             { label: 'Générer le patch', status: '○' },
             { label: 'Afficher les diffs', status: '○' },
             { label: 'Appliquer les fichiers choisis', status: '○' },
@@ -2372,6 +2383,8 @@ export async function activate(context: vscode.ExtensionContext) {
             ]);
             sidebarProvider.postAgentPlan(`Codestral Agent ${iteration}/${maxIterations}`, [
                 { label: 'Lire le workspace', status: '●' },
+                { label: 'Planifier la solution', status: '○' },
+                { label: 'Inspecter fichiers/recherches', status: '○' },
                 { label: 'Générer le patch', status: '○' },
                 { label: 'Afficher les diffs', status: '○' },
                 { label: 'Appliquer les fichiers choisis', status: '○' },
@@ -2379,12 +2392,58 @@ export async function activate(context: vscode.ExtensionContext) {
                 { label: 'Corriger si nécessaire', status: '○' }
             ]);
             const workspaceContext = await collectWorkspaceContext(currentTask);
-            const prompt = buildAgentPatchPrompt(currentTask, workspaceContext, lastTestOutput);
+            agentState.phase = 'planning';
+            agentState.updatedAt = Date.now();
+            await persistAgentAutonomyState(context, workspaceRoot, agentState);
+            sidebarProvider.postAgentPlan(`Codestral Agent ${iteration}/${maxIterations}`, [
+                { label: 'Lire le workspace', status: '✓' },
+                { label: 'Planifier la solution', status: '●' },
+                { label: 'Inspecter fichiers/recherches', status: '○' },
+                { label: 'Générer le patch', status: '○' },
+                { label: 'Afficher les diffs', status: '○' },
+                { label: 'Appliquer les fichiers choisis', status: '○' },
+                { label: 'Lancer les tests', status: '○' },
+                { label: 'Corriger si nécessaire', status: '○' }
+            ]);
+            const agentPlan = await runAgentPrompt(
+                `Codestral Agent: plan ${iteration}/${maxIterations}`,
+                buildAgentPlanningPrompt(currentTask, workspaceContext, lastTestOutput),
+                Math.min(Math.max(Math.floor(maxTokens * 0.35), 1800), 5000),
+                0.15
+            ) ?? '';
+            agentState.phase = 'targeted-inspection';
+            agentState.updatedAt = Date.now();
+            await persistAgentAutonomyState(context, workspaceRoot, agentState);
+            sidebarProvider.postAgentPlan(`Codestral Agent ${iteration}/${maxIterations}`, [
+                { label: 'Lire le workspace', status: '✓' },
+                { label: 'Planifier la solution', status: agentPlan ? '✓' : '○' },
+                { label: 'Inspecter fichiers/recherches', status: '●' },
+                { label: 'Générer le patch', status: '○' },
+                { label: 'Afficher les diffs', status: '○' },
+                { label: 'Appliquer les fichiers choisis', status: '○' },
+                { label: 'Lancer les tests', status: '○' },
+                { label: 'Corriger si nécessaire', status: '○' }
+            ]);
+            const rawResearchPlan = await runAgentPrompt(
+                `Codestral Agent: inspection ciblée ${iteration}/${maxIterations}`,
+                buildAgentResearchPrompt(currentTask, workspaceContext, agentPlan, lastTestOutput),
+                2400,
+                0.1
+            ) ?? '';
+            const researchPlan = parseAgentResearchPlan(rawResearchPlan);
+            const researchContext = await collectAgentResearchContext(researchPlan, workspaceRoot, outputChannel);
+            const augmentedWorkspaceContext = [
+                workspaceContext,
+                researchContext ? `\n\nInspection ciblée agent:\n${researchContext}` : ''
+            ].filter(Boolean).join('\n');
+            const prompt = buildAgentPatchPrompt(currentTask, augmentedWorkspaceContext, lastTestOutput, agentPlan);
             agentState.phase = 'patch-generation';
             agentState.updatedAt = Date.now();
             await persistAgentAutonomyState(context, workspaceRoot, agentState);
             sidebarProvider.postAgentPlan(`Codestral Agent ${iteration}/${maxIterations}`, [
                 { label: 'Lire le workspace', status: '✓' },
+                { label: 'Planifier la solution', status: agentPlan ? '✓' : '○' },
+                { label: 'Inspecter fichiers/recherches', status: researchContext ? '✓' : '○' },
                 { label: 'Générer le patch', status: '●' },
                 { label: 'Afficher les diffs', status: '○' },
                 { label: 'Appliquer les fichiers choisis', status: '○' },
@@ -2394,7 +2453,8 @@ export async function activate(context: vscode.ExtensionContext) {
             const rawPatch = await runAgentPrompt(
                 `Codestral Agent: cycle ${iteration}/${maxIterations}`,
                 prompt,
-                maxTokens
+                maxTokens,
+                0.15
             );
 
             if (!rawPatch) {
@@ -2410,7 +2470,8 @@ export async function activate(context: vscode.ExtensionContext) {
                 const repairedPatch = await runAgentPrompt(
                     'Codestral Agent: réparation du patch...',
                     buildAgentPatchRepairPrompt(rawPatch),
-                    maxTokens
+                    maxTokens,
+                    0.1
                 );
                 patch = repairedPatch ? parseAgentPatch(repairedPatch) : undefined;
             }
@@ -2435,7 +2496,8 @@ export async function activate(context: vscode.ExtensionContext) {
                 const repairedPatch = await runAgentPrompt(
                     'Codestral Agent: réparation du patch invalide...',
                     repairPrompt,
-                    maxTokens
+                    maxTokens,
+                    0.1
                 );
                 patch = repairedPatch ? parseAgentPatch(repairedPatch) : undefined;
                 if (!patch || patch.changes.length === 0) {
@@ -2530,7 +2592,8 @@ export async function activate(context: vscode.ExtensionContext) {
                 const repairedPatchRaw = await runAgentPrompt(
                     'Codestral Agent: fusion du conflit...',
                     buildAgentConflictRepairPrompt(selectedPatch, conflictError, conflictContext, conflictSnapshots),
-                    maxTokens
+                    maxTokens,
+                    0.1
                 );
                 const repairedPatch = repairedPatchRaw ? parseAgentPatch(repairedPatchRaw) : undefined;
                 if (!repairedPatch || repairedPatch.changes.length === 0) {
@@ -3043,7 +3106,60 @@ function extractCodeFromResponse(response: string): string {
     return response.trim();
 }
 
-function buildAgentPatchPrompt(task: string, workspaceContext: string, testOutput: string): string {
+function buildAgentPlanningPrompt(task: string, workspaceContext: string, testOutput: string): string {
+    return [
+        'Tu es Codestral Agent en phase de planification.',
+        'Analyse le workspace avant de proposer du code.',
+        'Réponds avec un plan court et concret, sans JSON obligatoire.',
+        '',
+        'Objectif qualité:',
+        '- Comprendre le type de projet, ses conventions et les fichiers réellement importants.',
+        '- Repérer les fichiers à modifier, les fichiers à ne pas toucher et les risques de régression.',
+        '- Prévoir une solution minimale mais complète, avec validations adaptées.',
+        '- Pour une création de projet ou une amélioration UI, prévoir une expérience utilisable, cohérente et finie.',
+        '- Après une erreur de test, viser la cause racine plutôt qu’un contournement superficiel.',
+        '',
+        `Tâche utilisateur:\n${task}`,
+        '',
+        testOutput ? `Sortie de tests précédente:\n${testOutput.slice(0, 12000)}` : '',
+        '',
+        workspaceContext
+    ].filter(Boolean).join('\n');
+}
+
+function buildAgentResearchPrompt(task: string, workspaceContext: string, agentPlan: string, testOutput: string): string {
+    return [
+        'Tu es Codestral Agent en phase d’inspection ciblée.',
+        'Demande uniquement les preuves utiles avant de générer un patch.',
+        'Réponds uniquement avec un objet JSON valide, sans Markdown, sans texte autour.',
+        '',
+        'Schéma JSON obligatoire:',
+        '{',
+        '  "files": ["chemin/relatif.ext"],',
+        '  "searches": ["terme ou symbole précis"],',
+        '  "commands": ["commande de validation sûre"],',
+        '  "visualChecks": ["chemin/page.html ou description courte"]',
+        '}',
+        '',
+        'Règles:',
+        '- files: fichiers importants à lire en entier ou presque. Maximum 10.',
+        '- searches: noms de composants, fonctions, routes, classes CSS ou textes à retrouver. Maximum 8.',
+        '- commands: seulement des validations sûres comme npm test, npm run build, npm run lint, node --check fichier.js, python -m pytest, cargo check, go test ./.... Maximum 3.',
+        '- Interdit dans commands: install, add, update, start, dev, serve, sudo, rm, git reset, git clean, redirections ou chaînage shell.',
+        '- visualChecks: pages HTML ou surfaces UI à vérifier visuellement/statistiquement. Maximum 5.',
+        '- Si aucune inspection n’est nécessaire, renvoie des tableaux vides.',
+        '',
+        `Tâche utilisateur:\n${task}`,
+        '',
+        agentPlan ? `Plan déjà proposé:\n${agentPlan.slice(0, 8000)}` : '',
+        '',
+        testOutput ? `Sortie de tests précédente:\n${testOutput.slice(0, 12000)}` : '',
+        '',
+        workspaceContext.slice(0, 24000)
+    ].filter(Boolean).join('\n');
+}
+
+function buildAgentPatchPrompt(task: string, workspaceContext: string, testOutput: string, agentPlan = ''): string {
     return [
         'Tu es Codestral Agent, un agent de code autonome dans VSCodium.',
         'Tu dois produire un patch multi-fichiers directement applicable.',
@@ -3055,6 +3171,10 @@ function buildAgentPatchPrompt(task: string, workspaceContext: string, testOutpu
         'Après une erreur de test, lis la sortie, corrige la cause racine, puis produis un patch minimal de réparation.',
         'Pour un projet web, pense aux références HTML/CSS/JS et évite de casser les chemins de ressources.',
         'N’écris pas de commande destructive dans testCommand: pas de rm -rf, git reset --hard, git clean -fd, chmod 777 ou sudo rm.',
+        'N’écris pas de serveur long-running dans testCommand: pas de python -m http.server, npm run dev/start/serve/preview, vite, next dev ou live-server.',
+        'Privilégie un résultat fini: états vides, erreurs, responsive, accessibilité simple, textes cohérents et intégration aux conventions existantes.',
+        'Si tu crées un nouveau projet, fournis tous les fichiers nécessaires pour qu’il démarre sans étapes cachées.',
+        'Ne remplace pas un fichier complet par une version simplifiée si tu ne dois modifier qu’une partie.',
         'Réponds uniquement avec un objet JSON valide, sans Markdown, sans texte autour.',
         '',
         'Schéma JSON obligatoire:',
@@ -3077,6 +3197,8 @@ function buildAgentPatchPrompt(task: string, workspaceContext: string, testOutpu
         '- Si tu n’as pas assez de contexte, fais le plus petit patch raisonnable.',
         '',
         `Tâche utilisateur:\n${task}`,
+        '',
+        agentPlan ? `Plan interne à suivre:\n${agentPlan.slice(0, 8000)}` : '',
         '',
         testOutput ? `Sortie de tests précédente:\n${testOutput.slice(0, 12000)}` : '',
         '',
@@ -3191,6 +3313,287 @@ function parseAgentPatch(raw: string): AgentPatch | undefined {
     }
 }
 
+function parseAgentResearchPlan(raw: string): AgentResearchPlan {
+    const trimmed = raw.trim();
+    const fenced = trimmed.match(/```(?:json)?\s*([\s\S]*?)```/);
+    const candidate = fenced ? fenced[1].trim() : trimmed;
+    const firstBrace = candidate.indexOf('{');
+    const lastBrace = candidate.lastIndexOf('}');
+    const jsonText = firstBrace >= 0 && lastBrace > firstBrace
+        ? candidate.slice(firstBrace, lastBrace + 1)
+        : candidate;
+
+    try {
+        const parsed = JSON.parse(jsonText) as AgentResearchPlan;
+        return {
+            files: normalizeResearchItems(parsed.files, 10),
+            searches: normalizeResearchItems(parsed.searches, 8),
+            commands: normalizeResearchItems(parsed.commands, 3),
+            visualChecks: normalizeResearchItems(parsed.visualChecks, 5)
+        };
+    } catch {
+        return {
+            files: [],
+            searches: [],
+            commands: [],
+            visualChecks: []
+        };
+    }
+}
+
+function normalizeResearchItems(value: unknown, limit: number): string[] {
+    if (!Array.isArray(value)) {
+        return [];
+    }
+
+    const seen = new Set<string>();
+    const items: string[] = [];
+    for (const item of value) {
+        const normalized = String(item ?? '').trim();
+        if (!normalized || seen.has(normalized.toLowerCase())) {
+            continue;
+        }
+        seen.add(normalized.toLowerCase());
+        items.push(normalized);
+        if (items.length >= limit) {
+            break;
+        }
+    }
+
+    return items;
+}
+
+async function collectAgentResearchContext(
+    plan: AgentResearchPlan,
+    workspaceRoot: string,
+    outputChannel?: vscode.OutputChannel
+): Promise<string> {
+    const sections: string[] = [];
+
+    const fileContext = await collectRequestedFileContext(plan.files ?? [], workspaceRoot);
+    if (fileContext) {
+        sections.push(['Lecture fichier par fichier:', fileContext].join('\n'));
+    }
+
+    const searchContext = await collectTargetedSearchContext(plan.searches ?? []);
+    if (searchContext) {
+        sections.push(['Recherche ciblée:', searchContext].join('\n'));
+    }
+
+    const commandContext = await collectGuidedCommandContext(plan.commands ?? [], workspaceRoot, outputChannel);
+    if (commandContext) {
+        sections.push(['Commandes guidées:', commandContext].join('\n'));
+    }
+
+    const visualContext = await collectVisualCheckContext(plan.visualChecks ?? [], workspaceRoot, plan.files ?? []);
+    if (visualContext) {
+        sections.push(['Test visuel/statique:', visualContext].join('\n'));
+    }
+
+    return sections.join('\n\n');
+}
+
+async function collectRequestedFileContext(files: string[], workspaceRoot: string): Promise<string> {
+    const sections: string[] = [];
+    for (const relativePath of files.slice(0, 10)) {
+        try {
+            const targetUri = resolveWorkspaceFile(workspaceRoot, relativePath);
+            const content = await readFileIfExists(targetUri);
+            if (content.includes('\u0000')) {
+                sections.push(`--- ${relativePath} ---\nFichier binaire ignoré.`);
+                continue;
+            }
+
+            const limit = 18000;
+            sections.push([
+                `--- ${relativePath} ---`,
+                content.length > limit ? `Contenu tronqué à ${limit} caractères sur ${content.length}.` : 'Contenu complet:',
+                '```',
+                content.slice(0, limit),
+                '```'
+            ].join('\n'));
+        } catch (error) {
+            const message = error instanceof Error ? error.message : String(error);
+            sections.push(`--- ${relativePath} ---\nErreur lecture: ${message}`);
+        }
+    }
+
+    return sections.join('\n\n');
+}
+
+async function collectTargetedSearchContext(searches: string[]): Promise<string> {
+    if (searches.length === 0) {
+        return '';
+    }
+
+    const files = await vscode.workspace.findFiles(
+        '**/*',
+        '**/{node_modules,out,.git,dist,build,coverage,.vscode}/**',
+        1400
+    );
+    const hits: string[] = [];
+
+    for (const term of searches.slice(0, 8)) {
+        const lowerTerm = term.toLowerCase();
+        let termHits = 0;
+        for (const file of files) {
+            if (termHits >= 12) {
+                break;
+            }
+
+            try {
+                const bytes = await vscode.workspace.fs.readFile(file);
+                const content = Buffer.from(bytes).toString('utf8');
+                if (content.includes('\u0000') || content.length > 300000) {
+                    continue;
+                }
+
+                const lowerContent = content.toLowerCase();
+                if (!lowerContent.includes(lowerTerm)) {
+                    continue;
+                }
+
+                const relativePath = vscode.workspace.asRelativePath(file);
+                const lines = content.split(/\r?\n/);
+                for (let index = 0; index < lines.length && termHits < 12; index++) {
+                    if (lines[index].toLowerCase().includes(lowerTerm)) {
+                        hits.push(`${term}: ${relativePath}:${index + 1}: ${lines[index].trim().slice(0, 220)}`);
+                        termHits++;
+                    }
+                }
+            } catch {
+                // Ignore unreadable files.
+            }
+        }
+
+        if (termHits === 0) {
+            hits.push(`${term}: aucun résultat`);
+        }
+    }
+
+    return hits.join('\n');
+}
+
+async function collectGuidedCommandContext(
+    commands: string[],
+    workspaceRoot: string,
+    outputChannel?: vscode.OutputChannel
+): Promise<string> {
+    const sections: string[] = [];
+    for (const command of commands.slice(0, 3)) {
+        const safetyError = validateGuidedResearchCommand(command);
+        if (safetyError) {
+            sections.push([
+                `$ ${command}`,
+                `Commande ignorée: ${safetyError}`
+            ].join('\n'));
+            continue;
+        }
+
+        const result = await runShellCommandDetailed(command, workspaceRoot, outputChannel);
+        sections.push([
+            `$ ${command}`,
+            `exit: ${result.exitCode ?? 'unknown'}`,
+            result.output.slice(0, 9000)
+        ].join('\n'));
+    }
+
+    return sections.join('\n\n');
+}
+
+function validateGuidedResearchCommand(command: string): string | undefined {
+    const normalized = command.toLowerCase().replace(/\s+/g, ' ').trim();
+    if (!normalized) {
+        return 'commande vide';
+    }
+
+    if (/[;&|`$<>]/.test(command)) {
+        return 'chaînage, redirection ou substitution shell refusé';
+    }
+
+    const forbidden = /\b(install|add|update|upgrade|audit fix|start|dev|serve|preview|sudo|rm|mv|cp|chmod|chown|git reset|git clean|curl|wget|ssh|scp|docker)\b/;
+    if (forbidden.test(normalized)) {
+        return 'commande non lecture/validation refusée';
+    }
+
+    const allowedPatterns = [
+        /^(npm|pnpm|yarn|bun) (test|run (lint|typecheck|check|build|test|test:e2e|e2e))(\s|$)/,
+        /^node --check [\w./ -]+\.(cjs|mjs|js)$/,
+        /^python3? -m pytest(\s|$)/,
+        /^pytest(\s|$)/,
+        /^cargo (check|test)(\s|$)/,
+        /^go test(\s|$)/,
+        /^tsc --noemit(\s|$)/,
+        /^npx --no-install tsc --noemit(\s|$)/,
+        /^php -l [\w./ -]+\.php$/
+    ];
+
+    if (!allowedPatterns.some(pattern => pattern.test(normalized))) {
+        return 'commande hors liste de validation sûre';
+    }
+
+    return undefined;
+}
+
+async function collectVisualCheckContext(
+    visualChecks: string[],
+    workspaceRoot: string,
+    requestedFiles: string[]
+): Promise<string> {
+    const htmlFiles = Array.from(new Set([
+        ...visualChecks.filter(item => /\.html?$/i.test(item)),
+        ...requestedFiles.filter(item => /\.html?$/i.test(item))
+    ])).slice(0, 8);
+    const shouldCheck = visualChecks.length > 0 || htmlFiles.length > 0;
+    if (!shouldCheck) {
+        return '';
+    }
+
+    const smoke = await runStaticSmokeCheck(htmlFiles, workspaceRoot);
+    const htmlCandidates = htmlFiles.length > 0
+        ? htmlFiles
+        : (await vscode.workspace.findFiles('**/*.html', '**/{.git,node_modules,out,dist,build,coverage}/**', 8))
+            .map(file => vscode.workspace.asRelativePath(file));
+    const reports: string[] = [];
+
+    for (const relativeHtmlPath of Array.from(new Set(htmlCandidates)).slice(0, 8)) {
+        const html = await readFileIfExists(resolveWorkspaceFile(workspaceRoot, relativeHtmlPath));
+        const refs = extractHtmlLocalReferences(html);
+        const cssRefs = refs.filter(ref => /\.css(?:[?#].*)?$/i.test(ref));
+        const jsRefs = refs.filter(ref => /\.(?:mjs|cjs|js)(?:[?#].*)?$/i.test(ref));
+        const hasViewport = /<meta\s+[^>]*name=["']viewport["']/i.test(html);
+        const hasTitle = /<title>[^<]+<\/title>/i.test(html);
+        const hasBodyContent = /<body[\s\S]*?>[\s\S]{80,}<\/body>/i.test(html);
+        const cssSignals: string[] = [];
+
+        for (const cssRef of cssRefs.slice(0, 4)) {
+            const cleanRef = cssRef.split(/[?#]/)[0];
+            if (!cleanRef || cleanRef.startsWith('/')) {
+                continue;
+            }
+            const cssPath = path.normalize(path.join(path.dirname(relativeHtmlPath), cleanRef));
+            const css = await readFileIfExists(resolveWorkspaceFile(workspaceRoot, cssPath));
+            cssSignals.push(`${cssPath}: media=${/@media\b/i.test(css)}, flex/grid=${/\b(display:\s*(flex|grid)|grid-template|flex-wrap)\b/i.test(css)}, focus=${/:focus-visible|:focus\b/i.test(css)}`);
+        }
+
+        reports.push([
+            `--- ${relativeHtmlPath} ---`,
+            `viewport: ${hasViewport ? 'oui' : 'non'}`,
+            `title: ${hasTitle ? 'oui' : 'non'}`,
+            `contenu body substantiel: ${hasBodyContent ? 'oui' : 'non'}`,
+            `css liés: ${cssRefs.length}`,
+            `js liés: ${jsRefs.length}`,
+            cssSignals.length > 0 ? `signaux CSS: ${cssSignals.join('; ')}` : ''
+        ].filter(Boolean).join('\n'));
+    }
+
+    return [
+        smoke.output,
+        '',
+        ...reports
+    ].join('\n');
+}
+
 async function buildAgentConflictSnapshots(patch: AgentPatch, workspaceRoot: string): Promise<string> {
     const sections: string[] = [];
     for (const change of patch.changes.slice(0, 12)) {
@@ -3276,7 +3679,11 @@ async function determineAgentValidationCommands(
     workspaceRoot: string
 ): Promise<ValidationCommand[]> {
     if (patch.testCommand && patch.testCommand.trim()) {
-        return [{ label: 'model-test', command: patch.testCommand.trim() }];
+        const modelCommand = patch.testCommand.trim();
+        const modelCommandError = validateAgentProvidedTestCommand(modelCommand);
+        if (!modelCommandError) {
+            return [{ label: 'model-test', command: modelCommand }];
+        }
     }
 
     const configured = config.get<string>('testCommand', 'npm test').trim();
@@ -3285,6 +3692,33 @@ async function determineAgentValidationCommands(
     }
 
     return detectProjectValidationCommands(workspaceRoot, patch);
+}
+
+function validateAgentProvidedTestCommand(command: string): string | undefined {
+    const normalized = command.toLowerCase().replace(/\s+/g, ' ').trim();
+    if (!normalized) {
+        return 'commande vide';
+    }
+
+    const forbiddenPatterns = [
+        /\bpython3?\s+-m\s+http\.server\b/,
+        /\b(npm|pnpm|yarn|bun)\s+(run\s+)?(dev|start|serve|preview)\b/,
+        /\b(vite|next dev|nuxt dev|astro dev|live-server|http-server)\b/,
+        /\bflask\s+run\b/,
+        /\bdjango-admin\s+runserver\b/,
+        /\bmanage\.py\s+runserver\b/,
+        /\brails\s+server\b/,
+        /\bsudo\b/,
+        /\brm\s+(-[a-z]*r[a-z]*f|-f[a-z]*r|-r[a-z]*f)\b/,
+        /\bgit\s+reset\s+--hard\b/,
+        /\bgit\s+clean\s+-[a-z]*f[a-z]*d?\b/
+    ];
+
+    if (forbiddenPatterns.some(pattern => pattern.test(normalized))) {
+        return `commande non adaptée à une validation agent: ${command}`;
+    }
+
+    return undefined;
 }
 
 async function detectProjectValidationCommands(workspaceRoot: string, patch: AgentPatch): Promise<ValidationCommand[]> {
@@ -4108,7 +4542,7 @@ async function collectWorkspaceContext(query = ''): Promise<string> {
     const files = await vscode.workspace.findFiles(
         '**/*',
         '**/{node_modules,out,.git,dist,build,coverage,.vscode}/**',
-        900
+        1400
     );
     const queryTerms = query
         .toLowerCase()
@@ -4153,7 +4587,7 @@ async function collectWorkspaceContext(query = ''): Promise<string> {
 
     const rankedFiles = candidates
         .sort((a, b) => b.score - a.score)
-        .slice(0, shouldScanBroadly(query) ? 56 : 36);
+        .slice(0, shouldScanBroadly(query) ? 72 : 48);
     const linkedFiles = await collectLinkedWorkspaceFiles(rankedFiles, candidates);
 
     const chunks: string[] = [
@@ -4173,7 +4607,7 @@ async function collectWorkspaceContext(query = ''): Promise<string> {
         ...workspaceIndexCache
             .slice()
             .sort((a, b) => scoreWorkspaceFile(b.path, queryTerms, false, explicitTargets.some(target => matchesFileTarget(b.path, target))) - scoreWorkspaceFile(a.path, queryTerms, false, explicitTargets.some(target => matchesFileTarget(a.path, target))))
-            .slice(0, shouldScanBroadly(query) ? 140 : 64)
+            .slice(0, shouldScanBroadly(query) ? 180 : 90)
             .map(entry => `- ${entry.path} (${entry.language}, ${entry.size} octets): ${entry.summary}`),
         '',
         'Packs de contexte gros projet:',
@@ -4186,7 +4620,7 @@ async function collectWorkspaceContext(query = ''): Promise<string> {
     ];
 
     for (const item of rankedFiles) {
-        const snippetLimit = item.isExplicitTarget ? 9000 : shouldScanBroadly(query) ? 4200 : 3000;
+        const snippetLimit = item.isExplicitTarget ? 12000 : shouldScanBroadly(query) ? 5200 : 3800;
         const snippet = item.content.length > snippetLimit ? item.content.slice(0, snippetLimit) : item.content;
 
         chunks.push([

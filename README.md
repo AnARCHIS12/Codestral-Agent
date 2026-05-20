@@ -1,7 +1,7 @@
 # Codestral Agent
 
 <p align="center">
-  <img src="codestral-vscode-extension/icons/codestral-icon.png" alt="Codestral Agent logo" width="128">
+  <img src="https://raw.githubusercontent.com/AnARCHIS12/Codestral-Agent/main/codestral-vscode-extension/icons/codestral-icon.png" alt="Codestral Agent logo" width="128">
 </p>
 
 <p align="center">
@@ -11,7 +11,7 @@
 <p align="center">
   <a href="https://marketplace.visualstudio.com/items?itemName=CodestralAgent.codestral-ai"><img src="https://img.shields.io/badge/Marketplace-Codestral%20Agent-007ACC?logo=visualstudiocode&logoColor=white" alt="Marketplace"></a>
   <a href="https://github.com/AnARCHIS12/Codestral-Agent"><img src="https://img.shields.io/badge/GitHub-Source-181717?logo=github&logoColor=white" alt="GitHub source"></a>
-  <img src="https://img.shields.io/badge/version-0.1.5-0f172a" alt="Version 0.1.5">
+  <img src="https://img.shields.io/badge/version-0.1.7-0f172a" alt="Version 0.1.7">
   <img src="https://img.shields.io/badge/license-MIT-16a34a" alt="MIT license">
   <img src="https://img.shields.io/badge/VSCodium%20%2F%20VS%20Code-1.75%2B-2563eb" alt="VSCodium and VS Code 1.75+">
   <img src="https://img.shields.io/badge/models-Mistral%20%2F%20Codestral-f97316" alt="Mistral and Codestral">
@@ -37,7 +37,7 @@ https://github.com/AnARCHIS12/Codestral-Agent
 | `docs/` | GitHub Pages version of the website |
 | `codestral-vscode-extension/` | Main VSCodium/VS Code extension |
 | `codestral-vscode-extension/README.md` | Marketplace listing page for the extension |
-| `codestral-vscode-extension/codestral-ai-0.1.5.vsix` | Locally installable extension package |
+| `codestral-vscode-extension/codestral-ai-0.1.7.vsix` | Locally installable extension package |
 
 ## Codestral Agent Extension
 
@@ -110,13 +110,13 @@ npm run package:vsix
 Then install the `.vsix` file in VSCodium/VS Code:
 
 ```bash
-code --install-extension /home/anar/Libre_Ai_agents/codestral-vscode-extension/codestral-ai-0.1.5.vsix
+code --install-extension /home/anar/Libre_Ai_agents/codestral-vscode-extension/codestral-ai-0.1.7.vsix
 ```
 
 For VSCodium Flatpak:
 
 ```bash
-flatpak run com.vscodium.codium --install-extension /home/anar/Libre_Ai_agents/codestral-vscode-extension/codestral-ai-0.1.5.vsix
+flatpak run com.vscodium.codium --install-extension /home/anar/Libre_Ai_agents/codestral-vscode-extension/codestral-ai-0.1.7.vsix
 ```
 
 In VSCodium:
@@ -124,7 +124,7 @@ In VSCodium:
 1. Open the Extensions view.
 2. Click the `...` menu.
 3. Choose `Install from VSIX...`.
-4. Select `codestral-ai-0.1.5.vsix`.
+4. Select `codestral-ai-0.1.7.vsix`.
 5. Reload the window with `Developer: Reload Window`.
 
 ## API Configuration
@@ -173,7 +173,7 @@ It contains:
 - `docs/index.html`
 - `docs/styles.css`
 - `docs/assets/codestral-icon.png`
-- `docs/downloads/codestral-ai-0.1.5.vsix`
+- `docs/downloads/codestral-ai-0.1.7.vsix`
 - `docs/.nojekyll`
 
 To enable it on GitHub:

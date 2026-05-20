@@ -1,7 +1,7 @@
 # Codestral Agent
 
 <p align="center">
-  <img src="icons/codestral-icon.png" alt="Codestral Agent logo" width="128">
+  <img src="https://raw.githubusercontent.com/AnARCHIS12/Codestral-Agent/main/codestral-vscode-extension/icons/codestral-icon.png" alt="Codestral Agent logo" width="128">
 </p>
 
 <p align="center">
@@ -11,7 +11,7 @@
 <p align="center">
   <a href="https://marketplace.visualstudio.com/items?itemName=CodestralAgent.codestral-ai"><img src="https://img.shields.io/badge/Marketplace-Codestral%20Agent-007ACC?logo=visualstudiocode&logoColor=white" alt="Marketplace"></a>
   <a href="https://github.com/AnARCHIS12/Codestral-Agent"><img src="https://img.shields.io/badge/GitHub-Source-181717?logo=github&logoColor=white" alt="GitHub source"></a>
-  <img src="https://img.shields.io/badge/version-0.1.5-0f172a" alt="Version 0.1.5">
+  <img src="https://img.shields.io/badge/version-0.1.7-0f172a" alt="Version 0.1.7">
   <img src="https://img.shields.io/badge/license-MIT-16a34a" alt="MIT license">
   <img src="https://img.shields.io/badge/models-Mistral%20%2F%20Codestral-f97316" alt="Mistral and Codestral">
 </p>
@@ -67,7 +67,7 @@ https://github.com/AnARCHIS12/Codestral-Agent/issues
 
 ## Current Version
 
-`0.1.5`
+`0.1.7`
 
 Main changes in this version:
 
@@ -93,7 +93,7 @@ Or install the local VSIX package:
 1. Open the Extensions view in VSCodium or VS Code.
 2. Open the `...` menu.
 3. Select `Install from VSIX...`.
-4. Choose `codestral-ai-0.1.5.vsix`.
+4. Choose `codestral-ai-0.1.7.vsix`.
 5. Reload the window with `Developer: Reload Window`.
 
 ## API Key Setup
@@ -163,7 +163,7 @@ npm run package:vsix
 The generated package is:
 
 ```text
-codestral-ai-0.1.5.vsix
+codestral-ai-0.1.7.vsix
 ```
 
 ## License

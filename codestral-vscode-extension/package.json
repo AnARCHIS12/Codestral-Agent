@@ -2,7 +2,7 @@
   "name": "codestral-ai",
   "displayName": "Codestral Agent",
   "description": "Agent de code pour VSCodium/VS Code avec chat, patchs multi-fichiers, tests, historique et modèles Mistral/Codestral.",
-  "version": "0.1.5",
+  "version": "0.1.7",
   "publisher": "CodestralAgent",
   "license": "MIT",
   "repository": {
@@ -218,15 +218,17 @@
         },
         "codestral-ai.agentMaxTokens": {
           "type": "number",
-          "default": 4000,
-          "description": "Nombre maximum de tokens pour le mode Agent multi-fichiers"
+          "default": 12000,
+          "minimum": 1000,
+          "maximum": 32000,
+          "description": "Nombre maximum de tokens pour le mode Agent multi-fichiers. Une valeur élevée améliore les gros patchs."
         },
         "codestral-ai.temperature": {
           "type": "number",
-          "default": 0.7,
+          "default": 0.3,
           "minimum": 0.0,
           "maximum": 1.0,
-          "description": "Contrôle la créativité de la génération"
+          "description": "Contrôle la créativité de la génération. Le mode Agent plafonne automatiquement cette valeur pour produire du code plus fiable."
         },
         "codestral-ai.testCommand": {
           "type": "string",
